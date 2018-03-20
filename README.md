@@ -1,2 +1,3 @@
-# WSOGMM
-Whole Sort of General Mish Mash
+# Whole Sort Of General Mish Mash (WSOGMM)
+> The technical term for the sum total of all the parallel universes, which aren't parallel, and furthermore are not, strictly speaking, universes either. This is easiest if you don't try to realize that until a little later, after you've realized that everything you've realized up to that moment is not true. The reason they are not universes is that any given universe is not a thing as such, but rather just a way of looking at the WSOGMM. The reason they are not parallel is the same reason the sea is not parallel. You can slice the WSOGMM any way you like and you will generally come up with something that someone will call home. Please feel free to blither now.  
+> -- The Hitchhiker's Guide to the Galaxy
