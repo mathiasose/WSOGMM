@@ -1,0 +1,35 @@
+{
+  "name": "WSOGMM",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "babel-preset-latest": "^6.24.1",
+    "bootswatch": "^4.0.0",
+    "dotenv": "^5.0.1",
+    "is-online": "^7.0.0",
+    "moment": "^2.21.0",
+    "moment-duration-format": "^2.2.2",
+    "node-vibrant": "^3.0.0",
+    "pixl-xml": "^1.0.13",
+    "query-string": "^6.0.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-icons": "^2.2.7",
+    "react-scripts": "1.1.1",
+    "reactstrap": "^5.0.0-beta.3",
+    "spotify-web-api-js": "^0.23.0",
+    "whatwg-fetch": "^2.0.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.2",
+    "eslint": "^4.19.1",
+    "eslint-plugin-react": "^7.7.0",
+    "prettier-eslint": "^8.8.1"
+  }
+}
