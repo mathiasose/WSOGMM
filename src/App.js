@@ -3,6 +3,7 @@ import 'moment/locale/nb';
 import { Card, CardColumns, Container } from 'reactstrap';
 import React, { Component } from 'react';
 
+import Bike from './components/Bike';
 import Coop from './components/Coop';
 import EnTur from './components/EnTur';
 import FaRefresh from 'react-icons/lib/fa/refresh';
@@ -25,6 +26,7 @@ class App extends Component {
           <Online />
           <Weather />
           <Coop />
+          <Bike />
           <EnTur />
           <Card />
           <Spotify />
