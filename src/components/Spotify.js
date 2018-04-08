@@ -8,10 +8,13 @@ import {
   CardFooter,
   CardImg,
   CardSubtitle,
-  CardTitle
+  CardTitle,
+  Progress
 } from 'reactstrap';
 import React, { Component } from 'react';
 
+import FaRandom from 'react-icons/lib/fa/random';
+import FaRepeat from 'react-icons/lib/fa/repeat';
 import SpotifyWebApi from 'spotify-web-api-js';
 import Vibrant from 'node-vibrant';
 import moment from 'moment';
@@ -59,7 +62,10 @@ export default class Spotify extends Component {
     const {
       is_playing,
       item,
-      device
+      device,
+      progress_ms,
+      repeat_state,
+      shuffle_state
     } = await SPOTIFY.getMyCurrentPlaybackState().catch(async err => {
       if (err.status === 401) {
         await this.invalidateSpotifyToken();
@@ -78,6 +84,9 @@ export default class Spotify extends Component {
         is_playing,
         item,
         device,
+        progress_ms,
+        repeat_state,
+        shuffle_state,
         colors: {
           primary: primary.getHex(),
           contrast: contrast
@@ -90,14 +99,27 @@ export default class Spotify extends Component {
     setTimeout(this.getCurrentPlaying.bind(this), 10 * 1000);
   }
 
+  async tick() {
+    if (this.state.progress_ms) {
+      await this.setState({
+        progress_ms: this.state.progress_ms + 1000
+      });
+    }
+    setTimeout(this.tick.bind(this), 1000);
+  }
+
   async componentDidMount() {
     await this.getCurrentPlaying();
+    setTimeout(this.tick.bind(this), 1000);
   }
 
   render() {
     if (!this.state || !this.state.is_playing) {
       return null;
     }
+
+    const progressPercentage =
+      100 * this.state.progress_ms / this.state.item.duration_ms;
 
     return (
       <Card
@@ -118,11 +140,24 @@ export default class Spotify extends Component {
           <CardSubtitle>{this.state.item.artists[0].name}</CardSubtitle>
           <CardTitle>{this.state.item.name}</CardTitle>
           <CardSubtitle>{this.state.item.album.name}</CardSubtitle>
-        </CardBody>
-        <CardFooter style={{ fontSize: 'x-small' }}>
+          <Progress
+            animated
+            value={progressPercentage}
+            style={{ marginTop: '1rem' }}
+          />
           <span>
+            {moment
+              .utc(moment.duration(this.state.progress_ms).asMilliseconds())
+              .format('mm:ss')}
+          </span>
+          <span style={{ float: 'right' }}>
             {moment.duration(this.state.item.duration_ms).format('mm:ss')}
           </span>
+        </CardBody>
+        <CardFooter style={{ fontSize: 'x-small' }}>
+          {this.state.repeat_state !== 'off' ? <FaRepeat /> : ''}
+          &emsp;
+          {this.state.shuffle_state ? <FaRandom /> : ''}
           <span style={{ float: 'right' }}>{this.state.device.name}</span>
         </CardFooter>
       </Card>
