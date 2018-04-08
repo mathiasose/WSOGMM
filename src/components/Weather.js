@@ -74,14 +74,21 @@ export default class Weather extends Component {
     return (
       <Card className="shadow">
         <CardBody>
-          <CardTitle>{this.state.location.name}</CardTitle>
-          <CardSubtitle>
-            <FaSunO /> &ensp;
-            {this.state.sun.rise} - {this.state.sun.set}
-          </CardSubtitle>
+          <CardTitle style={{ marginBottom: 0 }}>
+            {this.state.location.name}
+          </CardTitle>
+          <CardSubtitle />
         </CardBody>
+
         <Table size="sm" style={{ marginBottom: 0 }}>
           <tbody>
+            <tr className="table-secondary">
+              <th colSpan="4" style={{ textAlign: 'center' }}>
+                <FaSunO />
+                &emsp;
+                {this.state.sun.rise} - {this.state.sun.set}
+              </th>
+            </tr>
             {this.state.weather.map((when, i) => {
               return (
                 <tr key={i}>
