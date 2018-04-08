@@ -15,6 +15,9 @@ import FaBus from 'react-icons/lib/fa/bus';
 import FaRefresh from 'react-icons/lib/fa/refresh';
 import moment from 'moment';
 
+const STOP_ID = process.env.REACT_APP_ENTUR_STOP_ID;
+const CLIENT_NAME = process.env.REACT_APP_ENTUR_CLIENT_NAME;
+
 export default class EnTur extends Component {
   async getDepartures() {
     const { data } = await fetch(
@@ -23,11 +26,11 @@ export default class EnTur extends Component {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'ET-Client-Name': 'mathiasose-WSOGMM'
+          'ET-Client-Name': CLIENT_NAME
         },
         body: JSON.stringify({
           query: `{
-              stopPlace(id: "${process.env.REACT_APP_ENTUR_STOP_ID}") {
+              stopPlace(id: "${STOP_ID}") {
                 id
                 name
                 estimatedCalls(numberOfDepartures: 20) {
@@ -114,6 +117,12 @@ export default class EnTur extends Component {
   }
 
   async componentDidMount() {
+    if (!(STOP_ID && CLIENT_NAME)) {
+      console.error('Required env variable: REACT_APP_ENTUR_STOP_ID');
+      console.error('Required env variable: REACT_APP_ENTUR_CLIENT_NAME');
+      console.info('http://www.entur.org/dev/api/');
+      return;
+    }
     await this.getDepartures();
   }
 

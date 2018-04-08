@@ -8,13 +8,14 @@ import FaLock from 'react-icons/lib/fa/lock';
 import FaRefresh from 'react-icons/lib/fa/refresh';
 import moment from 'moment';
 
-const STATION_IDS = JSON.parse(process.env.REACT_APP_BIKE_STATION_IDS);
+const STATION_IDS = JSON.parse(process.env.REACT_APP_BIKE_STATION_IDS || '[]');
+const CLIENT_IDENTIFIER = process.env.REACT_APP_BIKE_CLIENT_IDENTIFIER;
 
 async function bikeFetch(url) {
   return fetch(url, {
     method: 'GET',
     headers: {
-      'Client-Identifier': process.env.REACT_APP_BIKE_CLIENT_IDENTIFIER
+      'Client-Identifier': CLIENT_IDENTIFIER
     }
   }).then(response => {
     if (response.status !== 200) {
@@ -58,8 +59,15 @@ export default class Bike extends Component {
   }
 
   async componentDidMount() {
+    if (!(STATION_IDS && CLIENT_IDENTIFIER)) {
+      console.error('Required env variable: REACT_APP_BIKE_STATION_IDS');
+      console.error('Required env variable: REACT_APP_BIKE_CLIENT_IDENTIFIER');
+      console.info('https://developer.oslobysykkel.no/api');
+      return;
+    }
     await this.fetchData();
   }
+
   render() {
     if (!this.state) {
       return null;

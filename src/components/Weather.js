@@ -7,6 +7,8 @@ import FaSunO from 'react-icons/lib/fa/sun-o';
 import React from 'react';
 import XML from 'pixl-xml';
 
+const FORECAST_URL = process.env.REACT_APP_YR_API_FORECAST_URL;
+
 export default class Weather extends Component {
   async getWeatherInfo() {
     const weatherState = yrWeatherData => ({
@@ -24,9 +26,7 @@ export default class Weather extends Component {
       precipitation: yrWeatherData.precipitation.value
     });
 
-    const { forecast, sun, location } = await fetch(
-      process.env.REACT_APP_YR_API_FORECAST_URL
-    )
+    const { forecast, sun, location } = await fetch(FORECAST_URL)
       .then(async response => {
         if (response.status !== 200) {
           return Promise.reject(response);
@@ -63,6 +63,11 @@ export default class Weather extends Component {
   }
 
   async componentDidMount() {
+    if (!FORECAST_URL) {
+      console.error('Required env variable: REACT_APP_YR_API_FORECAST_URL');
+      console.info('http://om.yr.no/info/verdata/free-weather-data/');
+      return;
+    }
     await this.getWeatherInfo();
   }
 

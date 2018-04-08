@@ -20,6 +20,7 @@ import Vibrant from 'node-vibrant';
 import moment from 'moment';
 import queryString from 'query-string';
 
+const CLIENT_ID = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
 const SPOTIFY = new SpotifyWebApi();
 
 export default class Spotify extends Component {
@@ -38,12 +39,11 @@ export default class Spotify extends Component {
 
       window.location.hash = '';
     } else {
-      const client_id = process.env.REACT_APP_SPOTIFY_CLIENT_ID;
       const scope = encodeURIComponent(
         'user-read-currently-playing user-read-playback-state'
       );
       const redirect_uri = encodeURI(window.location.href.split('#')[0]);
-      const authorize_url = `https://accounts.spotify.com/api/authorize?client_id=${client_id}&scope=${scope}&redirect_uri=${redirect_uri}&response_type=token`;
+      const authorize_url = `https://accounts.spotify.com/api/authorize?client_id=${CLIENT_ID}&scope=${scope}&redirect_uri=${redirect_uri}&response_type=token`;
 
       window.location.href = authorize_url;
     }
@@ -109,6 +109,11 @@ export default class Spotify extends Component {
   }
 
   async componentDidMount() {
+    if (!CLIENT_ID) {
+      console.error('Required env variable: REACT_APP_SPOTIFY_CLIENT_ID');
+      console.info('https://developer.spotify.com/web-api/user-guide/');
+      return;
+    }
     await this.getCurrentPlaying();
     setTimeout(this.tick.bind(this), 1000);
   }
