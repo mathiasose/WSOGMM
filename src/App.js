@@ -15,7 +15,15 @@ import dotenv from 'dotenv';
 import moment from 'moment';
 
 dotenv.config();
-moment.locale('nb');
+
+const MOMENT_LOCALE = process.env.REACT_APP_MOMENT_LOCALE;
+if (MOMENT_LOCALE) {
+  moment.locale(MOMENT_LOCALE);
+} else {
+  console.info(
+    'Use optional env variable REACT_APP_MOMENT_LOCALE to change locale for time strings'
+  );
+}
 
 class App extends Component {
   render() {

@@ -1,4 +1,4 @@
-*.log
-.env
 dist/
+.env
+*.log
 node_modules/
