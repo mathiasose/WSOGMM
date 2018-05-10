@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "babel-preset-latest": "^6.24.1",
+    "babel-preset-env": "^1.7.0",
     "bootswatch": "^4.0.0",
     "dotenv": "^5.0.1",
     "is-online": "^7.0.0",
@@ -15,9 +15,9 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-icons": "^2.2.7",
-    "react-scripts": "1.1.1",
-    "reactstrap": "^5.0.0-beta.3",
-    "spotify-web-api-js": "^0.23.0",
+    "react-scripts": "1.1.4",
+    "reactstrap": "^6.0.1",
+    "spotify-web-api-js": "^0.24.0",
     "whatwg-fetch": "^2.0.3"
   },
   "scripts": {
