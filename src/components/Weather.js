@@ -88,7 +88,7 @@ export default class Weather extends Component {
         <Table size="sm" style={{ marginBottom: 0 }}>
           <tbody>
             <tr className="table-secondary">
-              <th colSpan="4" style={{ textAlign: 'center' }}>
+              <th colSpan="5" style={{ textAlign: 'center' }}>
                 <FaSunO />
                 &emsp;
                 {this.state.sun.rise} - {this.state.sun.set}
@@ -101,6 +101,7 @@ export default class Weather extends Component {
                     {when.from} - {when.to}
                   </th>
                   <td align="right">{when.temperature}°C</td>
+                  <td align="right">{when.precipitation} mm</td>
                   <td align="right">{when.wind.speed} m/s</td>
                   <td align="left">{when.wind.direction}</td>
                 </tr>
