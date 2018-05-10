@@ -54,6 +54,17 @@ export default class Spotify extends Component {
     SPOTIFY.setAccessToken(undefined);
   }
 
+  async getColorsFromAlbumArt(url) {
+    const palette = await Vibrant.from(url).getPalette();
+    const primary = palette.Muted || palette.LightMuted || palette.DarkMuted;
+    const contrast = primary.getTitleTextColor();
+
+    return {
+      primary: primary.getHex(),
+      contrast
+    };
+  }
+
   async getCurrentPlaying() {
     if (!SPOTIFY.getAccessToken()) {
       await this.setUpSpotify();
@@ -76,9 +87,8 @@ export default class Spotify extends Component {
     });
 
     if (is_playing) {
-      const palette = await Vibrant.from(item.album.images[0].url).getPalette();
-      const primary = palette.Muted || palette.LightMuted || palette.DarkMuted;
-      const contrast = primary.getTitleTextColor();
+      const albumArt = item.album.images[0].url;
+      const colors = await this.getColorsFromAlbumArt(albumArt);
 
       this.setState({
         is_playing,
@@ -87,10 +97,7 @@ export default class Spotify extends Component {
         progress_ms,
         repeat_state,
         shuffle_state,
-        colors: {
-          primary: primary.getHex(),
-          contrast: contrast
-        }
+        colors
       });
     } else {
       this.setState({ is_playing });
