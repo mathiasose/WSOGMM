@@ -6,3 +6,7 @@ body {
 .shadow {
   box-shadow: 4px 4px 20px -10px #000000;
 }
+
+.progress .progress-bar.bg-css {
+  background-color: #FFFFFF !important;
+}
