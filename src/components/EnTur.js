@@ -17,6 +17,8 @@ import moment from 'moment';
 
 const STOP_ID = process.env.REACT_APP_ENTUR_STOP_ID;
 const CLIENT_NAME = process.env.REACT_APP_ENTUR_CLIENT_NAME;
+const AUTHORITY = 'RUT:Authority:RUT';
+const N_DEPARTURES = 20;
 
 export default class EnTur extends Component {
   async getDepartures() {
@@ -30,36 +32,28 @@ export default class EnTur extends Component {
         },
         body: JSON.stringify({
           query: `{
-              stopPlace(id: "${STOP_ID}") {
-                id
-                name
-                estimatedCalls(numberOfDepartures: 20) {
-                  aimedArrivalTime
-                  aimedDepartureTime
-                  expectedArrivalTime
-                  expectedDepartureTime
-                  realtime
-                  date
-                  forBoarding
-                  forAlighting
+            stopPlace(id: "${STOP_ID}") {
+              name
+              estimatedCalls(
+                numberOfDepartures: ${N_DEPARTURES},
+                omitNonBoarding: true,
+                whiteListed: {authorities: ["${AUTHORITY}"]}
+              ) {
+                expectedDepartureTime
                   destinationDisplay {
                     frontText
-                  }
-                  quay {
-                    id
                   }
                   serviceJourney {
                     journeyPattern {
                       line {
-                        id
-                        name
-                        transportMode
+                        publicCode
                       }
                     }
                   }
                 }
               }
-            }`,
+            }
+          }`,
           variables: null,
           operationName: null
         })
@@ -85,16 +79,7 @@ export default class EnTur extends Component {
     const departures = {};
 
     estimatedCalls.forEach(call => {
-      const [
-        company,
-        ,
-        lineNo
-      ] = call.serviceJourney.journeyPattern.line.id.split(':');
-
-      if (!call.forBoarding || company !== 'RUT') {
-        return;
-      }
-
+      const lineNo = call.serviceJourney.journeyPattern.line.publicCode;
       const destination = call.destinationDisplay.frontText;
       const key = `${lineNo} - ${destination}`;
 
@@ -102,13 +87,7 @@ export default class EnTur extends Component {
         departures[key] = [];
       }
 
-      const t = moment(call.expectedDepartureTime);
-
-      //if (t - moment() < moment.duration(1, "minutes")) {
-      //  return;
-      //}
-
-      departures[key].push(`${t.fromNow()}`);
+      departures[key].push(moment(call.expectedDepartureTime));
     });
 
     this.setState({ name, departures, lastUpdated: moment() });
@@ -159,7 +138,9 @@ export default class EnTur extends Component {
                   </tr>
                   <tr>
                     {this.state.departures[line]
+                      .filter(t => (t - moment() > moment.duration(1, 'minutes')))
                       .slice(0, 2)
+                      .map(t => `${t.fromNow()}`)
                       .map((departure, j) => <td key={j}>{departure}</td>)}
                   </tr>
                 </React.Fragment>
