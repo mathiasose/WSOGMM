@@ -1,5 +1,5 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootswatch/dist/litera/bootstrap.min.css';
+import 'bootswatch/dist/lumen/bootstrap.min.css';
 import './css/App.css';
 
 import App from './App';

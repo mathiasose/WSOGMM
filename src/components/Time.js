@@ -45,25 +45,21 @@ export default class Time extends Component {
       <Card
         inverse
         style={{
-          margin: '0.75rem auto',
+          margin: '0 auto 0.5rem auto',
           backgroundColor: '#666',
           borderColor: '#666'
         }}
         className="shadow"
       >
-        <CardBody>
+        <CardBody style={{padding: '0.25rem 0.5rem'}}>
           <Row style={{ display: 'flex', alignItems: 'center' }}>
-            <Col xs="5" style={{ fontSize: 'xx-large' }}>
-              <span role="img" aria-label="">
-                🐬
-              </span>
+            <Col xs="5">
+              {this.state.time.format('dddd LL')}
             </Col>
             <Col xs="2" style={{ textAlign: 'center', fontSize: 'xx-large' }}>
               {this.state.time.format('LT')}
             </Col>
             <Col xs="5" style={{ textAlign: 'right' }}>
-              {this.state.time.format('dddd LL')}
-              <br />
               Uke {this.state.week.number}:&ensp;
               {this.state.week.from.format(
                 'Do MMMM'

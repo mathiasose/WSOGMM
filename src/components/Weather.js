@@ -9,15 +9,23 @@ import XML from 'pixl-xml';
 
 const FORECAST_URL = process.env.REACT_APP_YR_API_FORECAST_URL;
 
+function formatTimeHHmm (time) {
+  return new Date(time).toLocaleTimeString('nb-NO', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+function formatTimeHH (time) {
+  return new Date(time).toLocaleTimeString('nb-NO', {
+    hour: '2-digit',
+  });
+}
+
 export default class Weather extends Component {
   async getWeatherInfo() {
     const weatherState = yrWeatherData => ({
-      from: new Date(yrWeatherData.from).toLocaleTimeString('nb-NO', {
-        hour: '2-digit'
-      }),
-      to: new Date(yrWeatherData.to).toLocaleTimeString('nb-NO', {
-        hour: '2-digit'
-      }),
+      from: formatTimeHH(yrWeatherData.from),
+      to: formatTimeHH(yrWeatherData.to),
       temperature: yrWeatherData.temperature.value,
       wind: {
         speed: yrWeatherData.windSpeed.mps,
@@ -48,14 +56,8 @@ export default class Weather extends Component {
       location,
       weather: forecast.tabular.time.slice(0, 4).map(weatherState),
       sun: {
-        rise: new Date(sun.rise).toLocaleTimeString('nb-NO', {
-          hour: '2-digit',
-          minute: '2-digit'
-        }),
-        set: new Date(sun.set).toLocaleTimeString('nb-NO', {
-          hour: '2-digit',
-          minute: '2-digit'
-        })
+        rise: formatTimeHHmm(sun.rise),
+        set: formatTimeHHmm(sun.set),
       }
     });
 
@@ -102,8 +104,7 @@ export default class Weather extends Component {
                   </th>
                   <td align="right">{when.temperature}°C</td>
                   <td align="right">{when.precipitation} mm</td>
-                  <td align="right">{when.wind.speed} m/s</td>
-                  <td align="left">{when.wind.direction}</td>
+                  <td align="right">{when.wind.speed} m/s {when.wind.direction}</td>
                 </tr>
               );
             })}

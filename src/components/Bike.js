@@ -1,10 +1,9 @@
 import 'whatwg-fetch';
 
-import { Card, CardBody, CardFooter, CardTitle, Table } from 'reactstrap';
+import { Card, CardBody, CardTitle, Table } from 'reactstrap';
 import React, { Component } from 'react';
 import FaBicycle from 'react-icons/lib/fa/bicycle';
 import FaExclamationCircle from 'react-icons/lib/fa/exclamation-circle';
-import FaLock from 'react-icons/lib/fa/lock';
 import FaRefresh from 'react-icons/lib/fa/refresh';
 import moment from 'moment';
 
@@ -77,6 +76,9 @@ export default class Bike extends Component {
       <Card className="shadow">
         <CardBody style={{ paddingBottom: 0 }}>
           <CardTitle>
+            <span className="float-right" style={{ fontSize: 'x-small', textAlign: 'right' }}>
+              <FaRefresh /> {this.state.lastUpdated.format('LTS')}
+            </span>
             <FaBicycle /> Bysykkel
           </CardTitle>
         </CardBody>
@@ -93,28 +95,19 @@ export default class Bike extends Component {
               this.state.stations.map((station, i) => (
                 <tr key={i} className={station.in_service ? '' : 'text-danger'}>
                   <th>
-                    {station.in_service ? '' : <FaExclamationCircle />}
-                    {station.title}
+                    {station.in_service ? '' : <FaExclamationCircle style={{marginRight: '0.5rem', verticalAlign: 'text-bottom'}} />}
+                    {station.title || `? (${station.id})`}
                   </th>
-                  <td>
+                  <td className={station.availability.bikes > 0 ? 'text-success' : 'text-danger'} style={{textAlign: 'right'}}>
                     <FaBicycle />
                     &ensp;
                     {station.availability.bikes}
-                  </td>
-                  <td>
-                    <FaLock />
-                    &ensp;
-                    {station.availability.locks}
                   </td>
                 </tr>
               ))
             )}
           </tbody>
         </Table>
-
-        <CardFooter style={{ fontSize: 'x-small', textAlign: 'right' }}>
-          <FaRefresh /> {this.state.lastUpdated.format('LTS')}
-        </CardFooter>
       </Card>
     );
   }

@@ -3,7 +3,6 @@ import 'whatwg-fetch';
 import {
   Card,
   CardBody,
-  CardFooter,
   CardTitle,
   Col,
   Row,
@@ -119,6 +118,9 @@ export default class EnTur extends Component {
                 <FaBus className="fa-lg" />
               </Col>
               <Col xs="10" style={{ fontSize: 'initial' }}>
+                <span className="float-right" style={{ fontSize: 'x-small', textAlign: 'right' }}>
+                  <FaRefresh /> {this.state.lastUpdated.format('LTS')}
+                </span>
                 {this.state.name}
               </Col>
             </Row>
@@ -130,26 +132,18 @@ export default class EnTur extends Component {
               .sort()
               .map((line, i) => (
                 <React.Fragment key={i}>
-                  <tr
-                    className="table-secondary"
-                    style={{ textAlign: 'center' }}
-                  >
-                    <th colSpan="2">{line}</th>
-                  </tr>
                   <tr>
+                    <th>{line}</th>
                     {this.state.departures[line]
                       .filter(t => (t - moment() > moment.duration(1, 'minutes')))
                       .slice(0, 2)
-                      .map(t => `${t.fromNow()}`)
+                      .map(t => `${t.format('HH:mm')}`)
                       .map((departure, j) => <td key={j}>{departure}</td>)}
                   </tr>
                 </React.Fragment>
               ))}
           </tbody>
         </Table>
-        <CardFooter style={{ fontSize: 'x-small', textAlign: 'right' }}>
-          <FaRefresh /> {this.state.lastUpdated.format('LTS')}
-        </CardFooter>
       </Card>
     );
   }
