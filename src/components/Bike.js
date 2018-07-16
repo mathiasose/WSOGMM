@@ -5,9 +5,12 @@ import React, { Component } from 'react';
 import FaBicycle from 'react-icons/lib/fa/bicycle';
 import FaExclamationCircle from 'react-icons/lib/fa/exclamation-circle';
 import FaRefresh from 'react-icons/lib/fa/refresh';
+import array from 'lodash/array';
+import collection from 'lodash/collection';
+import haversine from 'haversine';
 import moment from 'moment';
 
-const STATION_IDS = JSON.parse(process.env.REACT_APP_BIKE_STATION_IDS || '[]');
+const HOME_COORDINATES = JSON.parse(process.env.REACT_APP_HOME_COORDINATES || '{"latitude":59.0, "longitude":10.0}');
 const CLIENT_IDENTIFIER = process.env.REACT_APP_BIKE_CLIENT_IDENTIFIER;
 
 async function bikeFetch(url) {
@@ -39,10 +42,12 @@ export default class Bike extends Component {
     });
 
     if (stations && availability) {
+      const sorted = collection.sortBy(stations, (s) => haversine(HOME_COORDINATES, s.center));
+      const closest = array.take(sorted, 10);
       this.setState({
-        stations: STATION_IDS.map(id => ({
-          ...stations.find(station => station.id === id),
-          ...availability.find(station => station.id === id)
+        stations: closest.map(station => ({
+          ...station,
+          ...availability.find(s => s.id === station.id)
         })),
         lastUpdated: moment(),
         error: false
@@ -58,8 +63,8 @@ export default class Bike extends Component {
   }
 
   async componentDidMount() {
-    if (!(STATION_IDS && CLIENT_IDENTIFIER)) {
-      console.error('Required env variable: REACT_APP_BIKE_STATION_IDS');
+    if (!(HOME_COORDINATES && CLIENT_IDENTIFIER)) {
+      console.error('Required env variable: REACT_APP_HOME_COORDINATES');
       console.error('Required env variable: REACT_APP_BIKE_CLIENT_IDENTIFIER');
       console.info('https://developer.oslobysykkel.no/api');
       return;
