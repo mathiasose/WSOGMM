@@ -89,6 +89,7 @@ export default class EnTur extends Component {
       departures[key].push(moment(call.expectedDepartureTime));
     });
 
+    console.log({name, departures, lastUpdated: moment() })
     this.setState({ name, departures, lastUpdated: moment() });
 
     setTimeout(this.getDepartures.bind(this), 30 * 1000);
