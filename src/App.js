@@ -7,7 +7,6 @@ import Bike from './components/Bike';
 import Coop from './components/Coop';
 import EnTur from './components/EnTur';
 import Online from './components/Online';
-import Spotify from './components/Spotify';
 import Time from './components/Time';
 import Weather from './components/Weather';
 import dotenv from 'dotenv';
@@ -35,7 +34,6 @@ class App extends Component {
           <Coop />
           <Bike />
           <EnTur />
-          <Spotify />
         </CardColumns>
       </Container>
     );
