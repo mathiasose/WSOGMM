@@ -1,13 +1,6 @@
 import 'whatwg-fetch';
 
-import {
-  Card,
-  CardBody,
-  CardTitle,
-  Col,
-  Row,
-  Table
-} from 'reactstrap';
+import { Card, CardBody, CardTitle, Col, Row, Table } from 'reactstrap';
 import React, { Component } from 'react';
 
 import FaBus from 'react-icons/lib/fa/bus';
@@ -17,7 +10,6 @@ import moment from 'moment';
 const STOP_ID = process.env.REACT_APP_ENTUR_STOP_ID;
 const CLIENT_NAME = process.env.REACT_APP_ENTUR_CLIENT_NAME;
 const AUTHORITY = 'RUT:Authority:RUT';
-const N_DEPARTURES = 20;
 
 export default class EnTur extends Component {
   async getDepartures() {
@@ -33,19 +25,24 @@ export default class EnTur extends Component {
           query: `{
             stopPlace(id: "${STOP_ID}") {
               name
-              estimatedCalls(
-                numberOfDepartures: ${N_DEPARTURES},
-                omitNonBoarding: true,
-                whiteListed: {authorities: ["${AUTHORITY}"]}
-              ) {
-                expectedDepartureTime
-                destinationDisplay {
-                  frontText
-                }
-                serviceJourney {
-                  journeyPattern {
-                    line {
-                      publicCode
+              quays {
+                id
+                name
+                estimatedCalls(
+                  numberOfDepartures: 20,
+                  numberOfDeparturesPerLineAndDestinationDisplay: 3,
+                  omitNonBoarding: true,
+                  whiteListed: {authorities: ["${AUTHORITY}"]}
+                ) {
+                  expectedDepartureTime
+                  destinationDisplay {
+                    frontText
+                  }
+                  serviceJourney {
+                    journeyPattern {
+                      line {
+                        publicCode
+                      }
                     }
                   }
                 }
@@ -72,23 +69,33 @@ export default class EnTur extends Component {
       return;
     }
 
-    const { stopPlace: { name, estimatedCalls } } = data;
+    const {
+      stopPlace: { name, quays }
+    } = data;
 
-    const departures = {};
+    const quayDepartures = {};
 
-    estimatedCalls.forEach(call => {
-      const lineNo = call.serviceJourney.journeyPattern.line.publicCode;
-      const destination = call.destinationDisplay.frontText;
-      const key = `${lineNo} - ${destination}`;
+    quays.forEach(quay => {
+      const departures = {};
+      quay.estimatedCalls.forEach(call => {
+        const lineNo = call.serviceJourney.journeyPattern.line.publicCode;
+        const destination = call.destinationDisplay.frontText;
+        const key = `${lineNo} - ${destination}`;
 
-      if (departures[key] === undefined) {
-        departures[key] = [];
-      }
+        if (departures[key] === undefined) {
+          departures[key] = [];
+        }
 
-      departures[key].push(moment(call.expectedDepartureTime));
+        departures[key].push({
+          lineNo,
+          destination,
+          t: moment(call.expectedDepartureTime)
+        });
+      });
+      quayDepartures[quay.id] = departures;
     });
 
-    this.setState({ name, departures, lastUpdated: moment() });
+    this.setState({ name, quays: quayDepartures, lastUpdated: moment() });
 
     setTimeout(this.getDepartures.bind(this), 30 * 1000);
   }
@@ -108,6 +115,9 @@ export default class EnTur extends Component {
       return null;
     }
 
+    const { quays, lastUpdated, name } = this.state;
+    const num_quays = Object.keys(quays).length;
+
     return (
       <Card className="shadow">
         <CardBody style={{ paddingBottom: 0 }}>
@@ -117,30 +127,69 @@ export default class EnTur extends Component {
                 <FaBus className="fa-lg" />
               </Col>
               <Col xs="10" style={{ fontSize: 'initial' }}>
-                <span className="float-right" style={{ fontSize: 'x-small', textAlign: 'right' }}>
-                  <FaRefresh /> {this.state.lastUpdated.format('LTS')}
+                <span
+                  className="float-right"
+                  style={{ fontSize: 'x-small', textAlign: 'right' }}
+                >
+                  <FaRefresh /> {lastUpdated.format('LTS')}
                 </span>
-                {this.state.name}
+                {name}
               </Col>
             </Row>
           </CardTitle>
         </CardBody>
         <Table size="sm" style={{ marginBottom: 0 }}>
           <tbody>
-            {Object.keys(this.state.departures)
-              .sort()
-              .map((line, i) => (
-                <React.Fragment key={i}>
-                  <tr>
-                    <th>{line}</th>
-                    {this.state.departures[line]
-                      .filter(t => (t - moment() > moment.duration(1, 'minutes')))
-                      .slice(0, 2)
-                      .map(t => `${t.format('HH:mm')}`)
-                      .map((departure, j) => <td key={j}>{departure}</td>)}
-                  </tr>
-                </React.Fragment>
-              ))}
+            {Object.keys(quays)
+              .sort((a, b) => {
+                const _a = Object.keys(quays[a])
+                  .map(o => o.lineNo)
+                  .sort();
+                const _b = Object.keys(quays[b])
+                  .map(o => o.lineNo)
+                  .sort();
+
+                if (_a > _b) {
+                  return 1;
+                } else if (_a < _b) {
+                  return -1;
+                }
+                return 0;
+              })
+              .map((quay_id, i) => {
+                const quay = quays[quay_id];
+                return (
+                  <React.Fragment key={i}>
+                    {Object.keys(quay).map((line_id, j) => {
+                      const departuresToShow = quay[line_id]
+                        .map(o => o.t)
+                        .filter(
+                          t => t - moment() > moment.duration(1, 'minutes')
+                        )
+                        .filter(t => t - moment() < moment.duration(2, 'hour'))
+                        .slice(0, 2);
+
+                      if (departuresToShow.length === 0) {
+                        return null;
+                      }
+
+                      return (
+                        <tr key={j}>
+                          <th>{line_id}</th>
+                          {departuresToShow.map((t, k) => (
+                            <td key={k}>{`${t.format('HH:mm')}`}</td>
+                          ))}
+                        </tr>
+                      );
+                    })}
+                    {i < num_quays - 1 ? (
+                      <tr>
+                        <td colSpan="3" />
+                      </tr>
+                    ) : null}
+                  </React.Fragment>
+                );
+              })}
           </tbody>
         </Table>
       </Card>
