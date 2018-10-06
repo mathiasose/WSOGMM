@@ -39,14 +39,13 @@ export default class EnTur extends Component {
                 whiteListed: {authorities: ["${AUTHORITY}"]}
               ) {
                 expectedDepartureTime
-                  destinationDisplay {
-                    frontText
-                  }
-                  serviceJourney {
-                    journeyPattern {
-                      line {
-                        publicCode
-                      }
+                destinationDisplay {
+                  frontText
+                }
+                serviceJourney {
+                  journeyPattern {
+                    line {
+                      publicCode
                     }
                   }
                 }
