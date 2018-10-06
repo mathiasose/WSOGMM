@@ -56,14 +56,16 @@ export default class Spotify extends Component {
 
   async getColorsFromAlbumArt(url) {
     const palette = await Vibrant.from(url).getPalette();
-    const primaryColor = palette.DarkMuted || palette.Muted || palette.LightMuted;
-    const secondaryColor = palette.DarkVibrant || palette.Vibrant || palette.LightVibrant;
+    const primaryColor =
+      palette.DarkMuted || palette.Muted || palette.LightMuted;
+    const secondaryColor =
+      palette.DarkVibrant || palette.Vibrant || palette.LightVibrant;
     const textColor = primaryColor.getTitleTextColor();
 
     return {
       primary: primaryColor.getHex(),
       secondary: secondaryColor.getHex(),
-      text: textColor,
+      text: textColor
     };
   }
 
@@ -132,8 +134,9 @@ export default class Spotify extends Component {
       return null;
     }
 
-    const progressPercentage =
-      Math.round(100 * this.state.progress_ms / this.state.item.duration_ms);
+    const progressPercentage = Math.round(
+      100 * this.state.progress_ms / this.state.item.duration_ms
+    );
 
     return (
       <Card
@@ -156,8 +159,12 @@ export default class Spotify extends Component {
           <CardSubtitle>{this.state.item.album.name}</CardSubtitle>
           <Progress
             value={progressPercentage}
-            style={{ marginTop: '1rem', height: '2px', backgroundColor: this.state.colors.text }}
-            color='info'
+            style={{
+              marginTop: '1rem',
+              height: '2px',
+              backgroundColor: this.state.colors.text
+            }}
+            color="info"
           />
           <span>
             {moment

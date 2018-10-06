@@ -26,7 +26,7 @@ if (MOMENT_LOCALE) {
 class App extends Component {
   render() {
     return (
-      <Container fluid style={{paddingTop: '15px'}}>
+      <Container fluid style={{ paddingTop: '15px' }}>
         <Time />
         <CardColumns>
           <Online />

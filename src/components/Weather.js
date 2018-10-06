@@ -9,15 +9,15 @@ import XML from 'pixl-xml';
 
 const FORECAST_URL = process.env.REACT_APP_YR_API_FORECAST_URL;
 
-function formatTimeHHmm (time) {
+function formatTimeHHmm(time) {
   return new Date(time).toLocaleTimeString('nb-NO', {
     hour: '2-digit',
-    minute: '2-digit',
+    minute: '2-digit'
   });
 }
-function formatTimeHH (time) {
+function formatTimeHH(time) {
   return new Date(time).toLocaleTimeString('nb-NO', {
-    hour: '2-digit',
+    hour: '2-digit'
   });
 }
 
@@ -57,7 +57,7 @@ export default class Weather extends Component {
       weather: forecast.tabular.time.slice(0, 4).map(weatherState),
       sun: {
         rise: formatTimeHHmm(sun.rise),
-        set: formatTimeHHmm(sun.set),
+        set: formatTimeHHmm(sun.set)
       }
     });
 
@@ -104,7 +104,9 @@ export default class Weather extends Component {
                   </th>
                   <td align="right">{when.temperature}°C</td>
                   <td align="right">{when.precipitation} mm</td>
-                  <td align="right">{when.wind.speed} m/s {when.wind.direction}</td>
+                  <td align="right">
+                    {when.wind.speed} m/s {when.wind.direction}
+                  </td>
                 </tr>
               );
             })}

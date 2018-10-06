@@ -10,7 +10,10 @@ import collection from 'lodash/collection';
 import haversine from 'haversine';
 import moment from 'moment';
 
-const HOME_COORDINATES = JSON.parse(process.env.REACT_APP_HOME_COORDINATES || '{"latitude":59.0, "longitude":10.0}');
+const HOME_COORDINATES = JSON.parse(
+  process.env.REACT_APP_HOME_COORDINATES ||
+    '{"latitude":59.0, "longitude":10.0}'
+);
 const CLIENT_IDENTIFIER = process.env.REACT_APP_BIKE_CLIENT_IDENTIFIER;
 
 async function bikeFetch(url) {
@@ -42,7 +45,9 @@ export default class Bike extends Component {
     });
 
     if (stations && availability) {
-      const sorted = collection.sortBy(stations, (s) => haversine(HOME_COORDINATES, s.center));
+      const sorted = collection.sortBy(stations, s =>
+        haversine(HOME_COORDINATES, s.center)
+      );
       const closest = array.take(sorted, 10);
       this.setState({
         stations: closest.map(station => ({
@@ -81,7 +86,10 @@ export default class Bike extends Component {
       <Card className="shadow">
         <CardBody style={{ paddingBottom: 0 }}>
           <CardTitle>
-            <span className="float-right" style={{ fontSize: 'x-small', textAlign: 'right' }}>
+            <span
+              className="float-right"
+              style={{ fontSize: 'x-small', textAlign: 'right' }}
+            >
               <FaRefresh /> {this.state.lastUpdated.format('LTS')}
             </span>
             <FaBicycle /> Bysykkel
@@ -100,10 +108,26 @@ export default class Bike extends Component {
               this.state.stations.map((station, i) => (
                 <tr key={i} className={station.in_service ? '' : 'text-danger'}>
                   <th>
-                    {station.in_service ? '' : <FaExclamationCircle style={{marginRight: '0.5rem', verticalAlign: 'text-bottom'}} />}
+                    {station.in_service ? (
+                      ''
+                    ) : (
+                      <FaExclamationCircle
+                        style={{
+                          marginRight: '0.5rem',
+                          verticalAlign: 'text-bottom'
+                        }}
+                      />
+                    )}
                     {station.title || `? (${station.id})`}
                   </th>
-                  <td className={station.availability.bikes > 0 ? 'text-success' : 'text-danger'} style={{textAlign: 'right'}}>
+                  <td
+                    className={
+                      station.availability.bikes > 0
+                        ? 'text-success'
+                        : 'text-danger'
+                    }
+                    style={{ textAlign: 'right' }}
+                  >
                     <FaBicycle />
                     &ensp;
                     {station.availability.bikes}

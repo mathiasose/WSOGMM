@@ -51,11 +51,9 @@ export default class Time extends Component {
         }}
         className="shadow"
       >
-        <CardBody style={{padding: '0.25rem 0.5rem'}}>
+        <CardBody style={{ padding: '0.25rem 0.5rem' }}>
           <Row style={{ display: 'flex', alignItems: 'center' }}>
-            <Col xs="5">
-              {this.state.time.format('dddd LL')}
-            </Col>
+            <Col xs="5">{this.state.time.format('dddd LL')}</Col>
             <Col xs="2" style={{ textAlign: 'center', fontSize: 'xx-large' }}>
               {this.state.time.format('LT')}
             </Col>
