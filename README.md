@@ -12,3 +12,6 @@
 
 ### Kioskifying
 - https://github.com/abbott567/raspberry-pi-kiosk has a good guide
+
+#### Oof ouch owie my eyes
+- https://github.com/linusg/rpi-backlight Controlling RPi display backlight
