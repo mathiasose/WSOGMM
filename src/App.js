@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 
 import Bike from './components/Bike';
 import Coop from './components/Coop';
+import Display from './components/Display';
 import EnTur from './components/EnTur';
 import Online from './components/Online';
 import Time from './components/Time';
@@ -34,6 +35,7 @@ class App extends Component {
           <Coop />
           <Bike />
           <EnTur />
+          <Display />
         </CardColumns>
       </Container>
     );
