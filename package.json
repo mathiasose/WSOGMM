@@ -7,7 +7,7 @@
     "bootswatch": "^4.0.0",
     "dotenv": "^6.0.0",
     "haversine": "^1.1.0",
-    "is-online": "^8.0.0",
+    "is-online": "^8.1.0",
     "lodash": "^4.17.10",
     "moment": "^2.21.0",
     "moment-duration-format": "^2.2.2",
