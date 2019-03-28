@@ -1,4 +1,3 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootswatch/dist/lumen/bootstrap.min.css';
 import './css/App.css';
 

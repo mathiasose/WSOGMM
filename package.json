@@ -29,9 +29,17 @@
     "eject": "react-scripts eject"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.1.0",
     "eslint-plugin-react": "^7.7.0",
     "prettier-eslint": "^8.8.1"
-  }
+  },
+  "main": "index.js",
+  "repository": "git@github.com:mathiasose/WSOGMM.git",
+  "author": "Mathias Ose <mathias.ose@gmail.com>",
+  "license": "MIT",
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
