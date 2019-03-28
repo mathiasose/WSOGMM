@@ -10,17 +10,18 @@ import collection from 'lodash/collection';
 import haversine from 'haversine';
 import moment from 'moment';
 
+const ENABLED = JSON.parse(process.env.REACT_APP_BIKE_ENABLED || 1);
 const HOME_COORDINATES = JSON.parse(
   process.env.REACT_APP_HOME_COORDINATES ||
     '{"latitude":59.0, "longitude":10.0}'
 );
-const CLIENT_IDENTIFIER = process.env.REACT_APP_BIKE_CLIENT_IDENTIFIER;
+const CLIENT_NAME = process.env.REACT_APP_BIKE_CLIENT_NAME;
 
 async function bikeFetch(url) {
   return fetch(url, {
     method: 'GET',
     headers: {
-      'Client-Identifier': CLIENT_IDENTIFIER
+      'client-name': CLIENT_NAME
     }
   }).then(response => {
     if (response.status !== 200) {
@@ -33,12 +34,14 @@ async function bikeFetch(url) {
 export default class Bike extends Component {
   async fetchData() {
     const [{ stations }, { availability }] = await Promise.all([
-      bikeFetch('https://oslobysykkel.no/api/v1/stations'),
-      bikeFetch('https://oslobysykkel.no/api/v1/stations/availability').then(
-        data => {
-          return { availability: data.stations };
-        }
-      )
+      bikeFetch('https://gbfs.urbansharing.com/oslobysykkel.no/station_information.json')
+        .then(
+          ({ data: { stations } }) => ({ stations })
+        ),
+      bikeFetch('https://gbfs.urbansharing.com/oslobysykkel.no/station_status.json')
+        .then(
+          ({ data: { stations } }) => ({ availability: stations })
+        )
     ]).catch(err => {
       console.error(err);
       return [{}, {}];
@@ -46,13 +49,13 @@ export default class Bike extends Component {
 
     if (stations && availability) {
       const sorted = collection.sortBy(stations, s =>
-        haversine(HOME_COORDINATES, s.center)
+        haversine(HOME_COORDINATES, { latitude: s.lat, longitude: s.lon })
       );
       const closest = array.take(sorted, 10);
       this.setState({
         stations: closest.map(station => ({
           ...station,
-          ...availability.find(s => s.id === station.id)
+          ...availability.find(s => s.station_id === station.station_id)
         })),
         lastUpdated: moment(),
         error: false
@@ -68,10 +71,14 @@ export default class Bike extends Component {
   }
 
   async componentDidMount() {
-    if (!(HOME_COORDINATES && CLIENT_IDENTIFIER)) {
+    if (!ENABLED) {
+      console.info('Bike widget disabled');
+      return;
+    }
+    if (!(HOME_COORDINATES && CLIENT_NAME)) {
       console.error('Required env variable: REACT_APP_HOME_COORDINATES');
-      console.error('Required env variable: REACT_APP_BIKE_CLIENT_IDENTIFIER');
-      console.info('https://developer.oslobysykkel.no/api');
+      console.error('Required env variable: REACT_APP_BIKE_CLIENT_NAME');
+      console.info('https://oslobysykkel.no/apne-data/sanntid');
       return;
     }
     await this.fetchData();
@@ -106,9 +113,9 @@ export default class Bike extends Component {
               </tr>
             ) : (
               this.state.stations.map((station, i) => (
-                <tr key={i} className={station.in_service ? '' : 'text-danger'}>
+                <tr key={i} className={station.is_renting ? '' : 'text-danger'}>
                   <th>
-                    {station.in_service ? (
+                    {station.is_renting ? (
                       ''
                     ) : (
                       <FaExclamationCircle
@@ -118,11 +125,11 @@ export default class Bike extends Component {
                         }}
                       />
                     )}
-                    {station.title || `? (${station.id})`}
+                    {station.name || `? (${station.station_id})`}
                   </th>
                   <td
                     className={
-                      station.availability.bikes > 0
+                      station.num_bikes_available > 0
                         ? 'text-success'
                         : 'text-danger'
                     }
@@ -130,7 +137,7 @@ export default class Bike extends Component {
                   >
                     <FaBicycle />
                     &ensp;
-                    {station.availability.bikes}
+                    {station.num_bikes_available}
                   </td>
                 </tr>
               ))
