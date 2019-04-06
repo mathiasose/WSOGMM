@@ -3,6 +3,7 @@ import 'whatwg-fetch';
 import { Card, CardBody, CardSubtitle, CardTitle, Table } from 'reactstrap';
 
 import { Component } from 'react';
+import FaExclamationCircle from 'react-icons/lib/fa/exclamation-circle';
 import FaSunO from 'react-icons/lib/fa/sun-o';
 import React from 'react';
 import XML from 'pixl-xml';
@@ -52,16 +53,21 @@ export default class Weather extends Component {
     //   `https://shortsdag.no/api/forecast/${latitude}/${longitude}/`
     // ).then(async response => response.json());
 
-    this.setState({
-      location,
-      weather: forecast.tabular.time.slice(0, 4).map(weatherState),
-      sun: {
-        rise: formatTimeHHmm(sun.rise),
-        set: formatTimeHHmm(sun.set)
-      }
-    });
-
-    setTimeout(this.getWeatherInfo.bind(this), 30 * 60 * 1000);
+    if (forecast && forecast.tabular && sun && location) {
+      this.setState({
+        error: undefined,
+        location,
+        weather: forecast.tabular.time.slice(0, 4).map(weatherState),
+        sun: {
+          rise: formatTimeHHmm(sun.rise),
+          set: formatTimeHHmm(sun.set)
+        }
+      });
+      setTimeout(this.getWeatherInfo.bind(this), 30 * 60 * 1000);
+    } else {
+      this.setState({ error: true });
+      setTimeout(this.getWeatherInfo.bind(this), 60 * 1000);
+    }
   }
 
   async componentDidMount() {
@@ -78,41 +84,56 @@ export default class Weather extends Component {
       return null;
     }
 
-    return (
+    const card = (header, body) => (
       <Card className="shadow">
-        <CardBody>
-          <CardTitle style={{ marginBottom: 0 }}>
-            {this.state.location.name}
-          </CardTitle>
-          <CardSubtitle />
-        </CardBody>
-
+        {header}
         <Table size="sm" style={{ marginBottom: 0 }}>
-          <tbody>
-            <tr className="table-secondary">
-              <th colSpan="5" style={{ textAlign: 'center' }}>
-                <FaSunO />
-                &emsp;
-                {this.state.sun.rise} - {this.state.sun.set}
-              </th>
-            </tr>
-            {this.state.weather.map((when, i) => {
-              return (
-                <tr key={i}>
-                  <th>
-                    {when.from} - {when.to}
-                  </th>
-                  <td align="right">{when.temperature}°C</td>
-                  <td align="right">{when.precipitation} mm</td>
-                  <td align="right">
-                    {when.wind.speed} m/s {when.wind.direction}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
+          <tbody>{body}</tbody>
         </Table>
       </Card>
+    );
+
+    if (this.state.error) {
+      return card(
+        null,
+        <tr className="table-danger text-center">
+          <th>
+            <FaExclamationCircle /> Error
+          </th>
+        </tr>
+      );
+    }
+
+    return card(
+      <CardBody>
+        <CardTitle style={{ marginBottom: 0 }}>
+          {this.state.location.name}
+        </CardTitle>
+        <CardSubtitle />
+      </CardBody>,
+      <React.Fragment>
+        <tr className="table-secondary">
+          <th colSpan="5" style={{ textAlign: 'center' }}>
+            <FaSunO />
+            &emsp;
+            {this.state.sun.rise} - {this.state.sun.set}
+          </th>
+        </tr>
+        {this.state.weather.map((when, i) => {
+          return (
+            <tr key={i}>
+              <th>
+                {when.from} - {when.to}
+              </th>
+              <td align="right">{when.temperature}°C</td>
+              <td align="right">{when.precipitation} mm</td>
+              <td align="right">
+                {when.wind.speed} m/s {when.wind.direction}
+              </td>
+            </tr>
+          );
+        })}
+      </React.Fragment>
     );
   }
 }
