@@ -47,12 +47,20 @@ export default class Coop extends Component {
       return null;
     }
 
+    let openingHoursToday = this.state.store.OpeningHoursToday;
+    const match = openingHoursToday.match(
+      /(\d{2}:\d{2}):\d{2}-(\d{2}:\d{2}):\d{2}/
+    );
+    if (match) {
+      openingHoursToday = `${match[1]} - ${match[2]}`;
+    }
+
     return (
       <Card className="shadow">
         <CardBody>
           <CardTitle>Coop {this.state.store.Chain}</CardTitle>
           <CardSubtitle>{this.state.store.Name}</CardSubtitle>
-          <CardText>{this.state.store.OpeningHoursToday}</CardText>
+          <CardText>{openingHoursToday}</CardText>
         </CardBody>
       </Card>
     );
