@@ -8,7 +8,7 @@ const STORE_ID = process.env.REACT_APP_COOP_STORE_ID;
 
 export default class Coop extends Component {
   async fetchStore() {
-    const { Stores } = await fetch(JSON_URL)
+    const { Stores: stores } = await fetch(JSON_URL)
       .then(response => {
         if (response.status !== 200) {
           return Promise.reject(response);
@@ -20,13 +20,15 @@ export default class Coop extends Component {
         return {};
       });
 
-    Stores.forEach(store => {
-      if (store.StoreId === STORE_ID) {
-        this.setState({
-          store
-        });
-      }
-    });
+    if (stores) {
+      stores.forEach(store => {
+        if (store.StoreId === STORE_ID) {
+          this.setState({
+            store
+          });
+        }
+      });
+    }
   }
 
   componentDidMount() {

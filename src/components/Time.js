@@ -24,14 +24,16 @@ export default class Time extends Component {
         return {};
       });
 
-    this.setState({
-      time: moment(),
-      week: {
-        number: weekno,
-        from: moment(dates.fromdate_iso),
-        to: moment(dates.todate_iso)
-      }
-    });
+    if (weekno && dates) {
+      this.setState({
+        time: moment(),
+        week: {
+          number: weekno,
+          from: moment(dates.fromdate_iso),
+          to: moment(dates.todate_iso)
+        }
+      });
+    }
 
     await this.updateTime();
   }
@@ -59,9 +61,8 @@ export default class Time extends Component {
             </Col>
             <Col xs="5" style={{ textAlign: 'right' }}>
               Uke {this.state.week.number}:&ensp;
-              {this.state.week.from.format(
-                'Do MMMM'
-              )}&nbsp;&ndash;&nbsp;{this.state.week.to.format('Do MMMM')}
+              {this.state.week.from.format('Do MMMM')}&nbsp;&ndash;&nbsp;
+              {this.state.week.to.format('Do MMMM')}
             </Col>
           </Row>
         </CardBody>
