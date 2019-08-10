@@ -13,5 +13,14 @@
 ### Kioskifying
 - https://github.com/abbott567/raspberry-pi-kiosk has a good guide
 
+#### /home/pi/.config/lxsession/LXDE-pi/autostart
+Autostart browser and prevent screensaver from turning the screen off
+```
+@chromium-browser --disable-web-security --user-data-dir --test-type --kiosk --incognito http://localhost:3000
+@xset s noblank
+@xset s off
+@xset s -dpms
+```
+
 #### Oof ouch owie my eyes
 - https://github.com/linusg/rpi-backlight Controlling RPi display backlight
