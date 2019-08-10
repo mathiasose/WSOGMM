@@ -2,8 +2,15 @@ import 'whatwg-fetch';
 
 import { Card, CardBody, Col, Row } from 'reactstrap';
 import React, { Component } from 'react';
+import FaExclamationCircle from 'react-icons/lib/fa/exclamation-circle';
 
 import moment from 'moment';
+
+const style = {
+  margin: '0 auto 0.5rem auto',
+  backgroundColor: '#666',
+  borderColor: '#666'
+};
 
 export default class Time extends Component {
   async updateTime() {
@@ -26,6 +33,7 @@ export default class Time extends Component {
 
     if (weekno && dates) {
       this.setState({
+        error: false,
         time: moment(),
         week: {
           number: weekno,
@@ -33,26 +41,26 @@ export default class Time extends Component {
           to: moment(dates.todate_iso)
         }
       });
+    } else {
+      this.setState({ error: true });
     }
 
     await this.updateTime();
   }
 
   render() {
-    if (!this.state) {
-      return null;
+    if (!this.state || this.state.error) {
+      return (
+        <Card inverse style={style} className="shadow">
+          <CardBody>
+            <FaExclamationCircle /> Error
+          </CardBody>
+        </Card>
+      );
     }
 
     return (
-      <Card
-        inverse
-        style={{
-          margin: '0 auto 0.5rem auto',
-          backgroundColor: '#666',
-          borderColor: '#666'
-        }}
-        className="shadow"
-      >
+      <Card inverse style={style} className="shadow">
         <CardBody style={{ padding: '0.25rem 0.5rem' }}>
           <Row style={{ display: 'flex', alignItems: 'center' }}>
             <Col xs="5">{this.state.time.format('dddd LL')}</Col>
