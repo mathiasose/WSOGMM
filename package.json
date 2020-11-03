@@ -19,7 +19,7 @@
     "react-icons": "^2.2.7",
     "react-scripts": "2.1.8",
     "reactstrap": "^8.0.0",
-    "spotify-web-api-js": "^0.24.0",
+    "spotify-web-api-js": "^1.5.1",
     "whatwg-fetch": "^3.0.0"
   },
   "scripts": {
